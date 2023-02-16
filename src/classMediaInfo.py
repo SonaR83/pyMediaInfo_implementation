@@ -89,6 +89,13 @@ class Media:
 
                 except KeyError:
                     pass
+            # Проверка того, что в массиве bitrate_array что-то присутствует
+            try:
+                bitrate_array[0]
+            except IndexError:
+                print('Index Error')
+                bitrate_array.append('Unknown')
+
             for video_codec in parse_video_codec:
                 try:
                     if type(video_data.to_data()[video_codec]) == list:
@@ -97,13 +104,19 @@ class Media:
                         video_codec_array.append(video_data.to_data()[video_codec])
                 except KeyError:
                     pass
-            return {'format': format_array[0],
-                    'bit_rate': bitrate_array[0],
-                    'width': video_data.to_data()['width'],
-                    'height': video_data.to_data()['height'],
-                    'scan_type': video_data.to_data()['scan_type'],
-                    'video_codec': ','.join(video_codec_array)
-                    }
+
+                try:
+                    _scan = video_data.to_data()['scan_type']
+                except KeyError:
+                    _scan = 'Undefined'
+
+                return {'format': format_array[0],
+                        'bit_rate': bitrate_array[0],
+                        'width': video_data.to_data()['width'],
+                        'height': video_data.to_data()['height'],
+                        'scan_type': _scan,
+                        'video_codec': ','.join(video_codec_array)
+                        }
 
     def get_audio_stream_info(self):
         audio_stream = []
